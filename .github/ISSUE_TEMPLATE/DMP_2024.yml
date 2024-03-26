@@ -23,10 +23,10 @@ body:
       description: List the goals of the feature. Please add the goals that must be achieved by Mid-point check-in i.e 1.5 months into the coding period.
       value: |
         ## Goals
-        - [ ] [Goal 1]
-        - [ ] [Goal 2]
-        - [ ] [Goal 3]
-        - [ ] [Goal 4]
+        - [ ] [User-Friendly Input Interface]
+        - [ ] [Batch Processing and Metadata Management]
+        - [ ] [Translation and Conversion to English Text]
+        - [ ] [Integration with Google Drive and Sheets]
         - [ ] [Goals Achieved By Mid-point Milestone]
 
   - type: textarea
@@ -39,13 +39,31 @@ body:
     id: ticket-expected-outcome
     attributes:
       label: Expected Outcome
-      description: Describe in detail what the final product or result should look like and how it should behave.
+      description: [1. Development of Multilingual Translation Tool:
+      Objective: Design and implement a comprehensive tool (likely built using Bhaashini) capable of translating text, audio, and video content from multiple Indian languages into English text, ensuring seamless integration with the existing LLM framework.
+      Specifications: The tool should leverage advanced language translation technologies to ensure high fidelity and accuracy and should work with a large number of major and minor Indian languages (those supported by efforts such as Bhashini).
+      2. Quality Assurance and Performance Metrics:
+      Objective: Establish a process to measure and benchmark translation quality, speed, and reliability, ensuring the tool meets the specific needs of BelonggAI’s knowledge repository.
+      Specifications: Implement a testing framework to evaluate the translation accuracy, the integrity of metadata, and the processing speed. Define clear performance metrics, such as a specific accuracy rate in translations and a maximum processing time of time for different types of content. We will be able to provide fees to cover license fees to cover any additional SaaS tools or LLM performance measurement tools for this (such as Uptrain). 
+      3. Integration and Usability:
+      Objective: Ensure the translation tool is fully compatible and is able to ingest input files and deliver the output files using the existing BelonggAI data storage protocols and folder structures (Google Drive folders with API access) and streamline the process of updating the knowledge repository for both the technology team and the model itself.
+      Specifications: The tool must feature a user-friendly interface for manual operations and support automated batch processing for large datasets. It should automatically tag and store translated documents with relevant metadata in a designated Google Drive, adhering to predefined organizational standards.
+      4. Documentation and Training Materials:
+      Objective: Provide comprehensive documentation and training resources to ensure sustainable use and maintenance of the translation tool by Belongg’s team.
+      Specifications: Develop detailed user manuals, technical documentation, and video tutorials covering tool usage, troubleshooting, and best practices for content translation and management.
+      5. Progress Reporting and Feedback Mechanism:
+      Objective: Establish a structured reporting and feedback loop to monitor the project's progress, address challenges, and incorporate stakeholder feedback.
+      Specifications: The intern will submit bi-weekly progress reports outlining achievements, encountered issues, and next steps. A monthly review meeting with the mentorship team and relevant stakeholders will be held to discuss progress and adjust project direction as needed.]
 
   - type: textarea
     id: ticket-acceptance-criteria
     attributes:
       label: Acceptance Criteria
-      description: List the acceptance criteria for this feature.
+      description: 
+      [1. Functionality of the Input Interface: The webpage must be secure, user-friendly, and capable of handling multiple file uploads with associated metadata. Only authorized Belongg team members should access this portal.
+      2. Accuracy and Reliability of Translation: The system must deliver high-quality translations with a predefined accuracy threshold (e.g., 95% accuracy), ensuring the content is contextually and culturally accurate in English.
+      3. Efficient Batch Processing: The tool should handle batch uploads seamlessly, with each file's metadata accurately captured and associated with the corresponding translated content in the output.
+      4. Seamless Integration and Data Management: Successful integration with Google Drive for storing translated files and Google Sheets for real-time status updates. The system should maintain a high level of organization, allowing easy retrieval and tracking of processed knowledge assets]
 
   - type: textarea
     id: ticket-implementation-details
@@ -53,7 +71,12 @@ body:
       required: true
     attributes:
       label: Implementation Details
-      description: List any technical details about the proposed implementation, including any specific technologies that will be used.
+      description: 
+      1. Webpage Development: The webpage will be developed using web development technologies with backend support for user authentication (e.g., OAuth for username/password login). This ensures a secure and accessible platform for file submission.
+      2. Translation and Text Conversion Technology: Utilizing advanced AI and machine learning technologies for language translation and speech-to-text conversion. This includes leveraging open-source libraries and possibly integrating with third-party APIs to support a wide range of languages and content formats.
+      3. Batch Processing and Metadata Handling: Implementation of a backend system capable of processing multiple uploads simultaneously, extracting metadata for each file, and ensuring each piece of content is appropriately tagged and stored.
+      4. Google Drive and Sheets API Integration: Using Google Drive API for storing translated documents and Google Sheets API for updating the tracking spreadsheet. This requires careful planning to ensure data consistency, access management, and real-time update capabilities.
+      5. Continuous Monitoring and Feedback Loop: Setting up mechanisms for monitoring the system's performance, gathering user feedback, and making iterative improvements to enhance functionality, user experience, and translation accuracy.
 
   - type: textarea
     id: ticket-mockups
