@@ -61,10 +61,10 @@ body:
     attributes:
       label: Acceptance Criteria
       description: 
-      [1. Functionality of the Input Interface: The webpage must be secure, user-friendly, and capable of handling multiple file uploads with associated metadata. Only authorized Belongg team members should access this portal.
+      1. Functionality of the Input Interface: The webpage must be secure, user-friendly, and capable of handling multiple file uploads with associated metadata. Only authorized Belongg team members should access this portal.
       2. Accuracy and Reliability of Translation: The system must deliver high-quality translations with a predefined accuracy threshold (e.g., 95% accuracy), ensuring the content is contextually and culturally accurate in English.
-      3. Efficient Batch Processing: The tool should handle batch uploads seamlessly, with each file's metadata accurately captured and associated with the corresponding translated content in the output.
-      4. Seamless Integration and Data Management: Successful integration with Google Drive for storing translated files and Google Sheets for real-time status updates. The system should maintain a high level of organization, allowing easy retrieval and tracking of processed knowledge assets]
+      3. Efficient Batch Processing: The tool should handle batch uploads seamlessly, with each files metadata accurately captured and associated with the corresponding translated content in the output.
+      4. Seamless Integration and Data Management: Successful integration with Google Drive for storing translated files and Google Sheets for real-time status updates. The system should maintain a high level of organization, allowing easy retrieval and tracking of processed knowledge assets
 
   - type: textarea
     id: ticket-implementation-details
