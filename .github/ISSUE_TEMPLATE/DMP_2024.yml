@@ -11,7 +11,11 @@ body:
       label: Ticket Contents
       value: |
         ## Description
-        [Provide a brief description of the feature, including why it is needed and what it will accomplish.]
+        [Belongg is developing BelonggAI, a tool that will help development practitioners, researchers, funders, etc analyze their proposals, program documents, policy documents, etc to discover intersectional perspectives (gender, disability, sexual orientation,  caste, religion, etc) that could get added to
+make the program more inclusive. The tool is based on a RAG architecture, with customized prompts, and a corpus running into thousands of research papers, media articles, grey literature. This is constantly growing as we expand our focus areas. However, all of this is still in English. 
+
+To avoid omitting the knowledge produced by and on marginalized and underserved communities, we are committed to building on the tool’s capability to process knowledge produced in languages other than English.  To this end, Belongg would like to undertake a project to develop a tool to translate text documents, audio, and videos in Indian languages to PDFs with English text. The developed tool will be embedded in our existing LLM model that can only process English text. While working on this project, the intern selected as part of DMP  will receive guidance from a Belongg mentor to coordinate with our technology team (which includes an LLM engineer and colleagues from ARTPark)  and receive mentorship from a separate mentor assigned by Samagra to provide technical assistance to the intern
+]
 
   - type: textarea
     id: ticket-goals
