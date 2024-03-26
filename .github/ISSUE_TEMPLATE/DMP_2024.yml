@@ -39,7 +39,8 @@ body:
     id: ticket-expected-outcome
     attributes:
       label: Expected Outcome
-      description: [1. Development of Multilingual Translation Tool:
+      description: 
+      1. Development of Multilingual Translation Tool:
       Objective: Design and implement a comprehensive tool (likely built using Bhaashini) capable of translating text, audio, and video content from multiple Indian languages into English text, ensuring seamless integration with the existing LLM framework.
       Specifications: The tool should leverage advanced language translation technologies to ensure high fidelity and accuracy and should work with a large number of major and minor Indian languages (those supported by efforts such as Bhashini).
       2. Quality Assurance and Performance Metrics:
@@ -53,7 +54,7 @@ body:
       Specifications: Develop detailed user manuals, technical documentation, and video tutorials covering tool usage, troubleshooting, and best practices for content translation and management.
       5. Progress Reporting and Feedback Mechanism:
       Objective: Establish a structured reporting and feedback loop to monitor the project's progress, address challenges, and incorporate stakeholder feedback.
-      Specifications: The intern will submit bi-weekly progress reports outlining achievements, encountered issues, and next steps. A monthly review meeting with the mentorship team and relevant stakeholders will be held to discuss progress and adjust project direction as needed.]
+      Specifications: The intern will submit bi-weekly progress reports outlining achievements, encountered issues, and next steps. A monthly review meeting with the mentorship team and relevant stakeholders will be held to discuss progress and adjust project direction as needed.
 
   - type: textarea
     id: ticket-acceptance-criteria
