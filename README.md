@@ -1,6 +1,10 @@
 
 # Custom Language Translation API
+
+## Sample input
 ![alt text](image.png)
+
+## Sample Output
 ![alt text](image-1.png)
 ## Getting Started
 To run this API locally, follow the steps below:
