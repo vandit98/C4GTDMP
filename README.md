@@ -12,7 +12,7 @@ To run this API locally, follow the steps below:
 1. Clone the repository:
 
    ```
-   git clone https://github.com/garvit420/Bhashini_custom_api.git
+   git clone https://github.com/vandit98/C4GTDMP.git
    ```
 
 2. install fastapi and uvicorn:
