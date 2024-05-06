@@ -9,7 +9,7 @@
 ## Getting Started
 To run this API locally, follow the steps below:
 
-1. Clone the repository:
+1. Clone the repository: (Make sure to Clone the Basini-Aapi branch)
 
    ```
    git clone https://github.com/vandit98/C4GTDMP.git
