@@ -1,0 +1,9 @@
+st_login_form
+streamlit
+supabase >=0.1.0
+pdfminer-six
+tiktoken
+langchain==0.0.177
+uvicorn
+fastapi
+deep-translator
