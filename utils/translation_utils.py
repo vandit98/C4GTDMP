@@ -325,3 +325,6 @@ def delete_chunks_dirs():
     if os.path.exists("english_chunks"):
         shutil.rmtree("english_chunks")
     st.success("PDF chunks and English chunks directories have been deleted.")
+
+def start_translation(source_language):
+    translate_chunks(source_language)
