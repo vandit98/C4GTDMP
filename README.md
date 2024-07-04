@@ -19,7 +19,7 @@ This Streamlit app allows users to upload PDF or TXT files containing text in Hi
 
 ## Deployment
 
-The app is deployed on Streamlit Sharing. You can access it [here](https://belongg.streamlit.app/).
+The app is deployed on Streamlit Sharing. You can access it [here](https://belongg1.streamlit.app/).
 
 ## Login Credential 
 ![image](https://github.com/vandit98/C4GTDMP/assets/91458535/a0a086d6-ffd4-4fda-8b9e-4a1777816e1a)
