@@ -1,11 +1,7 @@
-# demo.py
-
 import streamlit as st
 import src.st_login_form as st_login_form
 
-# Import the new_page function from src folder
-from utils.text_extractor_translator import text_handler
-
+from utils.translator import main
 # Define session state class for page navigation
 class SessionState:
     def __init__(self):
@@ -57,4 +53,4 @@ if session_state.page == "login":
         if st.session_state["username"]:
             st.success(f"Welcome {st.session_state['username']}")
             session_state.page = "upload" 
-            text_handler()
+            main()
