@@ -1,6 +1,6 @@
 import streamlit as st
 from utils.audio_utils import get_encoded_string, is_base64
-from utils.translation_utils import get_service_id, transcribe_and_translate, translate, get_languages,text_extract_and_chunker, start_translation, delete_chunks_dirs
+from utils.translation_utils import get_service_id, transcribe_and_translate, translate, get_languages,text_extract_and_chunker, delete_chunks_dirs
 
 
 def main():
