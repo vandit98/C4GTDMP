@@ -2,6 +2,27 @@ import streamlit as st
 from utils.audio_utils import get_encoded_string, is_base64
 from utils.translation_utils import get_service_id, transcribe_and_translate, translate, get_languages,text_extract_and_chunker, delete_chunks_dirs, start_translation
 from utils.video_utils import convert_videos_to_flac, delete_output_dirs
+import zipfile
+from io import BytesIO
+
+def process_audio_files_in_zip(zip_file, source_language):
+    with zipfile.ZipFile(zip_file, "r") as zip_ref:
+        for file_name in zip_ref.namelist():
+            if file_name.endswith(".flac"):
+                with zip_ref.open(file_name) as file:
+                    audio_file = BytesIO(file.read())
+                    encoded_string, wav_file_content = get_encoded_string(audio_file)
+                    if is_base64(encoded_string):
+                        st.success(f"File {file_name} is valid")
+                        service_id = get_service_id(source_language)
+                        st.write("service id is", service_id)
+                        if service_id:
+                            result = transcribe_and_translate(encoded_string, service_id, source_language)
+                            if result:
+                                st.write(f"Transcription and Translation Result for {file_name}:")
+                                st.json(result)
+                    else:
+                        st.error(f"Invalid file format for {file_name}")
 
 def main():
     st.title("Transcription and Translation")
@@ -13,21 +34,24 @@ def main():
     if input_type == "Audio":
         st.write("Upload an audio file in FLAC format for transcription and translation")
         source_language = st.selectbox("Source Language", options=get_languages().values(), index=0)
-        audio_file = st.file_uploader("Choose a FLAC file", type=["flac"])
+        audio_file = st.file_uploader("Choose a FLAC file", type=["flac", "zip"])
         if st.button(" Transcribe plus Translate"):
             if audio_file:
-                encoded_string, wav_file_content = get_encoded_string(audio_file)
-                if is_base64(encoded_string):
-                    st.success("File is valid")
-                    service_id = get_service_id(source_language)
-                  
-                    if service_id:
-                        result = transcribe_and_translate(encoded_string, service_id, source_language)
-                        if result:
-                            st.write("Transcription and Translation Result:")
-                            st.json(result)
+                if audio_file.name.endswith(".zip"):
+                    process_audio_files_in_zip(audio_file, source_language)
                 else:
-                    st.error("Invalid file format")
+                    encoded_string, wav_file_content = get_encoded_string(audio_file)
+                    if is_base64(encoded_string):
+                        st.success("File is valid")
+                        service_id = get_service_id(source_language)
+                    
+                        if service_id:
+                            result = transcribe_and_translate(encoded_string, service_id, source_language)
+                            if result:
+                                st.write("Transcription and Translation Result:")
+                                st.json(result)
+                    else:
+                        st.error("Invalid file format")
 
     elif input_type == "Text":
         st.write("Enter text for translation")
