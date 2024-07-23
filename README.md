@@ -39,4 +39,5 @@ The app is deployed on Streamlit Sharing. You can access it [here](https://belon
 - [tiktoken](https://pypi.org/project/tiktoken/): Python wrapper for the TikTok API.
 - [langchain](https://pypi.org/project/langchain/): Provides document storage and processing capabilities for language-related tasks.
 - [deep-translator](https://pypi.org/project/deep-translator/): Python library for language translation using various translation services.
+- [Fastapi](https://fastapi.tiangolo.com/): Python library for creating api endpoints.
 
