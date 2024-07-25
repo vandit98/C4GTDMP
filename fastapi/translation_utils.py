@@ -1,4 +1,3 @@
-import streamlit as st
 import requests
 import json
 import pickle
@@ -10,7 +9,19 @@ from pdfminer.high_level import extract_text
 from langchain.docstore.document import Document
 import datetime
 from dotenv import load_dotenv
+import logging
+from logging.handlers import TimedRotatingFileHandler
+
 load_dotenv()
+
+# Configure logging
+log_filename = "logs/translation_application.log"
+log_handler = TimedRotatingFileHandler(log_filename, when="midnight", interval=1, backupCount=7)
+log_handler.setFormatter(logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s"))
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+logger.addHandler(log_handler)
 
 userID = os.getenv("userID")
 ulcaApiKey = os.getenv("ulcaApiKey")
@@ -25,9 +36,6 @@ languages = {
 
 def get_languages():
     return languages
-
-
-
 
 def get_service_id(source_language):
     url = "https://meity-auth.ulcacontrib.org/ulca/apis/v0/model/getModelsPipeline"
@@ -51,14 +59,16 @@ def get_service_id(source_language):
         "userID": userID,
         "ulcaApiKey": ulcaApiKey
     }
-    response = requests.post(url, json=payload, headers=headers)
-    if response.status_code == 200:
+    try:
+        response = requests.post(url, json=payload, headers=headers)
+        response.raise_for_status()
         response_data = response.json()
         service_id = response_data["pipelineResponseConfig"][0]["config"][0]["serviceId"]
+        logger.info(f"Service ID for {source_language} obtained successfully.")
         return service_id
-    else:
+    except requests.RequestException as e:
+        logger.error(f"Failed to get service ID for {source_language}. Error: {e}")
         return None
-
 
 def transcribe_and_translate(audio_content, service_id, source_language):
     url = "https://dhruva-api.bhashini.gov.in/services/inference/pipeline"
@@ -98,17 +108,16 @@ def transcribe_and_translate(audio_content, service_id, source_language):
         'Authorization': Authorization,
         'Content-Type': 'application/json'
     }
-    response = requests.post(url, headers=headers, data=payload)
-    if response.status_code == 200:
+    try:
+        response = requests.post(url, headers=headers, data=payload)
+        response.raise_for_status()
+        logger.info(f"Transcription and translation successful for audio content.")
         return response.json()
-    else:
-        # st.error("Failed to process the request")
+    except requests.RequestException as e:
+        logger.error(f"Failed to transcribe and translate audio content. Error: {e}")
         return None
-    
-
 
 def make_translation_request(source_language):
-    
     payload = {
         "pipelineTasks": [
             {
@@ -132,52 +141,55 @@ def make_translation_request(source_language):
         "ulcaApiKey": ulcaApiKey
     }
 
-    response = requests.post('https://meity-auth.ulcacontrib.org/ulca/apis/v0/model/getModelsPipeline', json=payload, headers=headers)
-
-    if response.status_code == 200:
+    try:
+        response = requests.post('https://meity-auth.ulcacontrib.org/ulca/apis/v0/model/getModelsPipeline', json=payload, headers=headers)
+        response.raise_for_status()
+        logger.info(f"Translation request for {source_language} made successfully.")
         return response.json()
-    else:
+    except requests.RequestException as e:
+        logger.error(f"Error making translation request for {source_language}. Error: {e}")
         return {"status_code": response.status_code, "message": "Error in translation request"}
 
 def perform_translation(response_data, source_language, content):
-    service_id = response_data["pipelineResponseConfig"][0]["config"][0]["serviceId"]
-    compute_payload = {
-        "pipelineTasks": [
-            {
-                "taskType": "translation",
-                "config": {
-                    "language": {
-                        "sourceLanguage": source_language,
-                        "targetLanguage": "en"
-                    },
-                    "serviceId": service_id
-                }
-            }
-        ],
-        "inputData": {
-            "input": [
+    try:
+        service_id = response_data["pipelineResponseConfig"][0]["config"][0]["serviceId"]
+        compute_payload = {
+            "pipelineTasks": [
                 {
-                    "source": content
+                    "taskType": "translation",
+                    "config": {
+                        "language": {
+                            "sourceLanguage": source_language,
+                            "targetLanguage": "en"
+                        },
+                        "serviceId": service_id
+                    }
                 }
-            ]
+            ],
+            "inputData": {
+                "input": [
+                    {
+                        "source": content
+                    }
+                ]
+            }
         }
-    }
 
-    callback_url = response_data["pipelineInferenceAPIEndPoint"]["callbackUrl"]
-    
-    headers2 = {
-        "Content-Type": "application/json",
-        response_data["pipelineInferenceAPIEndPoint"]["inferenceApiKey"]["name"]:
-            response_data["pipelineInferenceAPIEndPoint"]["inferenceApiKey"]["value"]
-    }
+        callback_url = response_data["pipelineInferenceAPIEndPoint"]["callbackUrl"]
+        
+        headers2 = {
+            "Content-Type": "application/json",
+            response_data["pipelineInferenceAPIEndPoint"]["inferenceApiKey"]["name"]:
+                response_data["pipelineInferenceAPIEndPoint"]["inferenceApiKey"]["value"]
+        }
 
-    compute_response = requests.post(callback_url, json=compute_payload, headers=headers2)
-
-    if compute_response.status_code == 200:
+        compute_response = requests.post(callback_url, json=compute_payload, headers=headers2)
+        compute_response.raise_for_status()
+        logger.info(f"Translation performed successfully for content.")
         return compute_response.json()
-    else:
+    except requests.RequestException as e:
+        logger.error(f"Error performing translation. Error: {e}")
         return {"status_code": compute_response.status_code, "message": "Error in translation"}
-
 
 def translate(source_language, content):
     response_data = make_translation_request(source_language)
@@ -185,7 +197,6 @@ def translate(source_language, content):
     if "status_code" in response_data and response_data["status_code"] != 200:
         return response_data
     
-    service_id = response_data["pipelineResponseConfig"][0]["config"][0]["serviceId"]
     compute_response_data = perform_translation(response_data, source_language, content)
     
     if "status_code" in compute_response_data and compute_response_data["status_code"] != 200:
@@ -204,72 +215,7 @@ def split_text_into_chunks(text, chunk_size=4000, chunk_overlap=300):
         chunks.append(text[i:i + chunk_size])
     return chunks
 
-def process_pdf_or_txt(uploaded_file, language, pdf_chunk_dir="pdf_chunks", processed_files_folder="processed_files"):
-    filename = uploaded_file.name
-
-    # Try decoding with different encodings for non-UTF-8 files
-    encodings_to_try = ['utf-8', 'latin1', 'iso-8859-1']
-    content = None
-    for encoding in encodings_to_try:
-        try:
-            content = uploaded_file.getvalue().decode(encoding)
-            break
-        except UnicodeDecodeError:
-            continue
-
-    if content is None:
-        # st.error("Failed to decode the file. Please ensure it's encoded properly.")
-        return
-
-    if not os.path.exists(processed_files_folder):
-        os.makedirs(processed_files_folder)
-
-    temp = {'filename': filename}
-    temp['date'] = datetime.datetime.now()
-
-    if filename.endswith('.pdf'):
-        # Extract text from PDF with specified encoding
-        chunks = split_text_into_chunks(extract_text(uploaded_file, codec=encoding))
-    elif filename.endswith('.txt'):
-        chunks = split_text_into_chunks(content)
-    else:
-        st.error("Unsupported file format. Please upload PDF or TXT files.")
-        return
-
-    num = len(chunks)
-    data = [temp for _ in range(num)]
-
-    metadata = []
-    metadata.extend(data)
-
-    docs = []
-    docs.extend(chunks)
-
-    docObjs = []
-
-    for j in range(0, num):
-        doc_data = docs[j]
-        doc_info = metadata[j]
-        doc_obj = Document(page_content=doc_data, metadata=doc_info, language=language)
-        docObjs.append(doc_obj)
-
-    if not os.path.exists(pdf_chunk_dir):
-        os.makedirs(pdf_chunk_dir)
-
-    picklFile = os.path.join(pdf_chunk_dir, f"{filename}.pkl")
-    with open(picklFile, 'wb') as file:
-        pickle.dump(docObjs, file)
-
-    # Move the file to the destination folder
-    uploaded_file.seek(0)
-    with open(os.path.join(processed_files_folder, filename), 'wb') as out:
-        out.write(uploaded_file.read())
-
-
-
-
-def translate_chunks_pdf( source_language, pickle_dir="./pdf_chunks", output_dir="english_chunks"):
-
+def translate_chunks_pdf(source_language, pickle_dir="./pdf_chunks", output_dir="english_chunks"):
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
@@ -281,37 +227,36 @@ def translate_chunks_pdf( source_language, pickle_dir="./pdf_chunks", output_dir
         with open(os.path.join(pickle_dir, pickle_file), 'rb') as file:
             docObjs = pickle.load(file)
 
-
         chunk_counter = 0
         for docObj in docObjs:
             source_chunks = docObj.page_content
-            print("we have our source chunk as ",source_chunks)
+            logger.info(f"Translating chunk {chunk_counter} of {pickle_file}.")
             translated_chunks = translate(source_language, source_chunks)
-            print("translated chunk is ",translated_chunks)
-            print(translated_chunks.keys())
-
             
+            if translated_chunks["status_code"] == 200:
+                translated_content = translated_chunks["translated_content"]
+                logger.info(f"Chunk {chunk_counter} of {pickle_file} translated successfully.")
+            else:
+                translated_content = ""
+                logger.error(f"Error translating chunk {chunk_counter} of {pickle_file}: {translated_chunks['message']}")
+
             translation_results[f"{pickle_file}_{chunk_counter}"] = {
                 "original_chunk": source_chunks,
-                "translated_chunk": translated_chunks["translated_content"],
-                # "metadata": docObj,
+                "translated_chunk": translated_content,
                 "status": translated_chunks["status_code"],
                 "message": translated_chunks["message"],
                 "source_file": pickle_file
             }
             chunk_counter += 1
-            translated_docObj = docObj  
-            translated_docObj.page_content = translated_chunks
+            docObj.page_content = translated_content
 
             # Save English pickle file
             output_pickle_file = os.path.join(output_dir, f"english_{pickle_file}")
             with open(output_pickle_file, 'wb') as output_file:
-                pickle.dump(translated_docObj, output_file)
+                pickle.dump(docObj, output_file)
     return translation_results
 
-            
-def translate_chunks_txt( source_language, pickle_dir="./txt_chunks", output_dir="english_chunks"):
-
+def translate_chunks_txt(source_language, pickle_dir="./txt_chunks", output_dir="english_chunks"):
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
@@ -323,32 +268,33 @@ def translate_chunks_txt( source_language, pickle_dir="./txt_chunks", output_dir
         with open(os.path.join(pickle_dir, pickle_file), 'rb') as file:
             docObjs = pickle.load(file)
 
-
         chunk_counter = 0
         for docObj in docObjs:
             source_chunks = docObj.page_content
-            print("we have our source chunk as ",source_chunks)
+            logger.info(f"Translating chunk {chunk_counter} of {pickle_file}.")
             translated_chunks = translate(source_language, source_chunks)
-            print("translated chunk is ",translated_chunks)
-            print(translated_chunks.keys())
-
             
+            if translated_chunks["status_code"] == 200:
+                translated_content = translated_chunks["translated_content"]
+                logger.info(f"Chunk {chunk_counter} of {pickle_file} translated successfully.")
+            else:
+                translated_content = ""
+                logger.error(f"Error translating chunk {chunk_counter} of {pickle_file}: {translated_chunks['message']}")
+
             translation_results[f"{pickle_file}_{chunk_counter}"] = {
                 "original_chunk": source_chunks,
-                "translated_chunk": translated_chunks["translated_content"],
-                # "metadata": docObj,
+                "translated_chunk": translated_content,
                 "status": translated_chunks["status_code"],
                 "message": translated_chunks["message"],
                 "source_file": pickle_file
             }
             chunk_counter += 1
-            translated_docObj = docObj  
-            translated_docObj.page_content = translated_chunks
+            docObj.page_content = translated_content
 
             # Save English pickle file
             output_pickle_file = os.path.join(output_dir, f"english_{pickle_file}")
             with open(output_pickle_file, 'wb') as output_file:
-                pickle.dump(translated_docObj, output_file)
+                pickle.dump(docObj, output_file)
     return translation_results
 
 def start_translation_pdf(source_language):
@@ -356,3 +302,8 @@ def start_translation_pdf(source_language):
 
 def start_translation_txt(source_language):
     return translate_chunks_txt(source_language)
+
+# if __name__ == "__main__":
+#     source_language = "hi" 
+#     start_translation_pdf(source_language)
+#     start_translation_txt(source_language)
