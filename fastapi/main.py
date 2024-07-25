@@ -9,7 +9,7 @@ import os
 if not os.path.exists("logs/"):
     os.makedirs("logs/")
 
-from audio_utils import get_encoded_string, is_base64
+from audio_utils import get_encoded_string, is_base64, delete_mp3_files
 from translation_utils import get_service_id, transcribe_and_translate, translate, get_languages, start_translation_pdf, start_translation_txt
 from video_utils import convert_videos_to_flac, delete_output_dirs
 from pdf_utils import delete_chunks_dirs, pdf_reader
@@ -48,6 +48,7 @@ async def transcribe_audio(source_language: str = Form(...), audio_file: UploadF
             if service_id:
                 result = transcribe_and_translate(encoded_string, service_id, source_language)
                 logger.info(f"Transcription and translation successful for {audio_file.filename}")
+                delete_mp3_files("./")
                 return JSONResponse(content={"result": result})
             else:
                 logger.error("Service ID not found")
@@ -57,6 +58,7 @@ async def transcribe_audio(source_language: str = Form(...), audio_file: UploadF
             raise HTTPException(status_code=400, detail="Invalid file format")
     except Exception as e:
         logger.exception("Error processing the audio file")
+        delete_mp3_files("./")
         return JSONResponse(content={"error": str(e)}, status_code=500)
 
 @app.post("/translate_audio_zip/")
@@ -86,12 +88,14 @@ async def transcribe_audio_zip(source_language: str = Form(...), zip_file: Uploa
                         else:
                             results.append({"file_name": file_name, "error": "Invalid file format"})
                             logger.error(f"Invalid file format for {file_name}")
+        delete_mp3_files("./")
         return JSONResponse(content={"results": results})
     except zipfile.BadZipFile:
         logger.error("Invalid ZIP file")
         raise HTTPException(status_code=400, detail="Invalid ZIP file")
     except Exception as e:
         logger.exception("Error processing the ZIP file")
+        delete_mp3_files("./")
         return JSONResponse(content={"error": str(e)}, status_code=500)
 
 @app.post("/translate_text/")
