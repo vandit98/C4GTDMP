@@ -41,9 +41,7 @@ This Streamlit app allows users to upload PDF or TXT files containing text in Hi
 - Santali
 - Gujarati
 - Odia
-
-
-- 
+  
 ## Usage
 
 1. Select the language of the PDF from the dropdown menu (currently supports Hindi only).
