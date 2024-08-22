@@ -3,7 +3,7 @@
 This guide will help you deploy the FastAPI application to an AWS EC2 instance.
 
 ## Supported Cloud Platform
-**Amazon EC2 Instance** - Config - m7g.large (minimum)
+**Amazon EC2 Instance** - Config - m7g.xlarge (minimum)
 
 ## Prerequisites
 
