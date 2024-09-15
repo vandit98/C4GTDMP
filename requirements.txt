@@ -8,3 +8,4 @@ uvicorn
 fastapi
 deep-translator
 pydub
+python-dotenv
